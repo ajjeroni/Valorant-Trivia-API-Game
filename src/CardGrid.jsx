@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 
-function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCount }) {
+export default function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCount }) {
   const [valStateData, setValStateData] = useState([]);
   const [correctElement, setCorrectElement] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -14,8 +14,8 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
     redirect: "follow",
   };
   function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min); // Ensure min is an integer
-    max = Math.floor(max); // Ensure max is an integer
+    min = Math.ceil(min);
+    max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
@@ -24,8 +24,6 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
       .then((response) => response.json())
       .then((result) => {
         let contentArr = [];
-        let randomIntegerArr = [];
-        let cardArr = [];
         for (let i = 0; i < result.data.length; i++) {
           let contentName = result.data[i].displayName;
           let contentImg = "";
@@ -37,19 +35,11 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
           let contentObj = { name: contentName, img: contentImg };
           contentArr.push(contentObj);
         }
-        for (let i = 0; i < 3; i++) {
-          let randomInt = getRandomIntInclusive(0, contentArr.length - 1)
-          while(randomIntegerArr.includes(randomInt)){
-            randomInt = getRandomIntInclusive(0, contentArr.length - 1)
-          }
-          randomIntegerArr.push(randomInt)
-        }
-        for (let i = 0; i < 3; i++) {
-          cardArr.push(contentArr[randomIntegerArr[i]]);
-        }
-        // let correctElement = getRandomIntInclusive(0, cardArr.length - 1);
+
+        const shuffled = contentArr.sort(() => 0.5 - Math.random());
+        const cardArr = shuffled.slice(0, 3);
+
         setCorrectElement(getRandomIntInclusive(0, cardArr.length - 1));
-        console.log(correctElement);
         setValStateData(cardArr);
       })
       .catch((error) => console.error(error));
@@ -74,7 +64,18 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
   return (
     <Box>
       <Box>
-        <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="h4"
+          component="div"
+          sx={{
+            flexGrow: 1,
+            color: "#ff4655",
+            fontWeight: 700,
+            mb: 2,
+            textAlign: "center",
+            textShadow: "1px 1px 8px #1f4068",
+          }}
+        >
           {valStateData.length > 0 &&
           correctElement !== null &&
           valStateData[correctElement]
@@ -84,15 +85,28 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
       </Box>
       <Grid
         container
-        direction="row"
-        sx={{
-          justifyContent: "space-around",
-          alignItems: "center",
-        }}
+        spacing={4}
+        justifyContent="center"
+        alignItems="center"
+        sx={{ minHeight: "40vh", mt: 2, mb: 2 }}
       >
         {valStateData.map((element, index) => (
-          <Grid size={4}>
-            <Card sx={{ maxWidth: 345 }} key={index}>
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Card
+              sx={{
+                maxWidth: 345,
+                margin: "0 auto",
+                borderRadius: 3,
+                boxShadow: 6,
+                transition: "transform 0.2s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  boxShadow: 12,
+                },
+                background: "rgba(255,255,255,0.07)",
+                border: "2px solid #ff4655",
+              }}
+            >
               <CardActionArea
                 onClick={() => {
                   console.log(element.name);
@@ -107,13 +121,35 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
         ))}
       </Grid>
       <Box>
-        <Typography>Score: {score}</Typography>
+        <Typography
+          sx={{
+            color: "#fff",
+            fontWeight: 600,
+            mt: 2,
+            textAlign: "center",
+            fontSize: "1.2rem",
+            letterSpacing: 1,
+          }}
+        >
+          Score: {score}
+        </Typography>
       </Box>
       <Button
+        variant="contained"
+        sx={{
+          mt: 3,
+          background: "#ff4655",
+          color: "white",
+          fontWeight: "bold",
+          borderRadius: 2,
+          "&:hover": {
+            background: "#ff6f91",
+          },
+        }}
         onClick={() => {
-          setScore(0)
-          setTryCount(1)
-          setGameStage('choose')
+          setScore(0);
+          setTryCount(1);
+          setGameStage('choose');
         }}
       >
         Reset
@@ -122,4 +158,3 @@ function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCou
   );
 }
 
-export default CardGrid;
