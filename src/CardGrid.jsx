@@ -1,13 +1,14 @@
-import { Card, Grid } from "@mui/material";
-import CardContent from "@mui/material/CardContent";
+import { Button, Card, Grid } from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 
-function CardGrid({ catagory }) {
+function CardGrid({ catagory, score, setScore, setGameStage, tryCount, setTryCount }) {
   const [valStateData, setValStateData] = useState([]);
+  const [correctElement, setCorrectElement] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const requestOptions = {
     method: "GET",
     redirect: "follow",
@@ -37,23 +38,48 @@ function CardGrid({ catagory }) {
           contentArr.push(contentObj);
         }
         for (let i = 0; i < 3; i++) {
-          let randomInteger = getRandomIntInclusive(0, contentArr.length - 1);
-          randomIntegerArr.push(randomInteger);
+          let randomInt = getRandomIntInclusive(0, contentArr.length - 1)
+          while(randomIntegerArr.includes(randomInt)){
+            randomInt = getRandomIntInclusive(0, contentArr.length - 1)
+          }
+          randomIntegerArr.push(randomInt)
         }
         for (let i = 0; i < 3; i++) {
           cardArr.push(contentArr[randomIntegerArr[i]]);
         }
-        console.log(cardArr);
-
+        // let correctElement = getRandomIntInclusive(0, cardArr.length - 1);
+        setCorrectElement(getRandomIntInclusive(0, cardArr.length - 1));
+        console.log(correctElement);
         setValStateData(cardArr);
       })
       .catch((error) => console.error(error));
-  }, [catagory]);
+  }, [catagory, refreshKey]);
+  function updateScore() {
+    let newScore = score + 10;
+    setScore(newScore);
+  }
+  function checkCorrectCard(card) {
+    if(tryCount === 5){
+      setGameStage('over')
+    }
+    if (card.name == valStateData[correctElement].name) {
+      updateScore();
+      console.log('Correct!')
+    }else{
+      console.log('Not Correct!')
+    }
+    setRefreshKey((prev) => prev + 1);
+  }
+
   return (
     <Box>
       <Box>
         <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-          Question
+          {valStateData.length > 0 &&
+          correctElement !== null &&
+          valStateData[correctElement]
+            ? `Which is ${valStateData[correctElement].name}?`
+            : "Loading..."}
         </Typography>
       </Box>
       <Grid
@@ -67,18 +93,31 @@ function CardGrid({ catagory }) {
         {valStateData.map((element, index) => (
           <Grid size={4}>
             <Card sx={{ maxWidth: 345 }} key={index}>
-              <CardActionArea>
+              <CardActionArea
+                onClick={() => {
+                  console.log(element.name);
+                  setTryCount(tryCount + 1);
+                  checkCorrectCard(element);
+                }}
+              >
                 <CardMedia component="img" height="140" image={element.img} />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {element.name}
-                  </Typography>
-                </CardContent>
               </CardActionArea>
             </Card>
           </Grid>
         ))}
       </Grid>
+      <Box>
+        <Typography>Score: {score}</Typography>
+      </Box>
+      <Button
+        onClick={() => {
+          setScore(0)
+          setTryCount(1)
+          setGameStage('choose')
+        }}
+      >
+        Reset
+      </Button>
     </Box>
   );
 }
