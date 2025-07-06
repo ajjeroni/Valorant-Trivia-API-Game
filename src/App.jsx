@@ -7,6 +7,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import CardGrid from "./CardGrid";
 import TextField from "@mui/material/TextField";
+import Score from "./Score";
 
 export default function App() {
   const [catagory, setCatagory] = useState("weapons");
@@ -28,8 +29,8 @@ export default function App() {
         minWidth: "100vw",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center", 
-        alignItems: "center", 
+        justifyContent: "center",
+        alignItems: "center",
         background: "linear-gradient(135deg, #0f1923 0%, #1f4068 100%)",
         p: 0,
         m: 0,
@@ -104,7 +105,7 @@ export default function App() {
                 if (event.key === "Enter") {
                   event.preventDefault();
                   setName(type);
-                  setGameStage('choose');
+                  setGameStage("choose");
                 }
               }}
               sx={{
@@ -190,7 +191,7 @@ export default function App() {
             >
               Maps
             </Button>
-            
+
             <Button
               variant="contained"
               sx={{
@@ -226,52 +227,13 @@ export default function App() {
         />
       )}
       {gameStage === "over" && (
-        <Box>
-          <Typography
-            sx={{
-              color: "#fff",
-              fontWeight: 600,
-              mt: 2,
-              textAlign: "center",
-              fontSize: "1.2rem",
-              letterSpacing: 1,
-            }}
-          >
-            Great Job {name}!
-          </Typography>
-          <Typography
-            sx={{
-              color: "#fff",
-              fontWeight: 600,
-              mt: 2,
-              textAlign: "center",
-              fontSize: "1.2rem",
-              letterSpacing: 1,
-            }}
-          >
-            Your score was: {score}
-          </Typography>
-          <Button
-            variant="contained"
-            sx={{
-              mt: 3,
-              background: "#ff4655",
-              color: "white",
-              fontWeight: "bold",
-              borderRadius: 2,
-              "&:hover": {
-                background: "#ff6f91",
-              },
-            }}
-            onClick={() => {
-              setScore(0);
-              setTryCount(1);
-              setGameStage("choose");
-            }}
-          >
-            Play Again
-          </Button>
-        </Box>
+        <Score
+          name={name}
+          score={score}
+          setScore={setScore}
+          setTryCount={setTryCount}
+          setGameStage={setGameStage}
+        />
       )}
     </Container>
   );

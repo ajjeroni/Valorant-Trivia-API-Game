@@ -49,7 +49,7 @@ export default function CardGrid({ catagory, score, setScore, setGameStage, tryC
     setScore(newScore);
   }
   function checkCorrectCard(card) {
-    if(tryCount === 5){
+    if(tryCount === 8){
       setGameStage('over')
     }
     if (card.name == valStateData[correctElement].name) {
