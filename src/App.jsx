@@ -16,9 +16,9 @@ export default function App() {
   const [type, setType] = useState("");
   const [name, setName] = useState("");
 
-  useEffect(() => {
-    console.log("Name updated:", name);
-  }, [name]);
+  // useEffect(() => {
+  //   console.log("Name updated:", name);
+  // }, [name]);
   return (
     <Container
       maxWidth={false}
@@ -190,6 +190,7 @@ export default function App() {
             >
               Maps
             </Button>
+            
             <Button
               variant="contained"
               sx={{
